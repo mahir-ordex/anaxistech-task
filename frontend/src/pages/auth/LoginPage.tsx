@@ -72,8 +72,8 @@ export function LoginPage() {
         ? { ...form, latitude: location.latitude, longitude: location.longitude }
         : form;
       const response = await authApi.login(loginData);
-      const { user, accessToken, session, requiresVerification } = response.data.data;
-      login(user, accessToken, session, requiresVerification);
+      const { user, accessToken, refreshToken, session, requiresVerification } = response.data.data;
+      login(user, accessToken, session, requiresVerification, refreshToken);
       
       if (requiresVerification) {
         setRequiresVerification(true);

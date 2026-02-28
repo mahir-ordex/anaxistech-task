@@ -61,10 +61,14 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await api.post('/auth/refresh');
-        const { accessToken } = response.data.data;
+        const refreshToken = useAuthStore.getState().refreshToken;
+        const response = await api.post('/auth/refresh', { refreshToken });
+        const { accessToken, refreshToken: newRefreshToken } = response.data.data;
         
         useAuthStore.getState().setAccessToken(accessToken);
+        if (newRefreshToken) {
+          useAuthStore.getState().setRefreshToken(newRefreshToken);
+        }
         processQueue(null, accessToken);
         
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -93,9 +97,15 @@ export const authApi = {
   login: (data: { email: string; password: string; latitude?: number; longitude?: number }) =>
     api.post('/auth/login', data),
   
-  logout: () => api.post('/auth/logout'),
+  logout: () => {
+    const refreshToken = useAuthStore.getState().refreshToken;
+    return api.post('/auth/logout', { refreshToken });
+  },
   
-  refresh: () => api.post('/auth/refresh'),
+  refresh: () => {
+    const refreshToken = useAuthStore.getState().refreshToken;
+    return api.post('/auth/refresh', { refreshToken });
+  },
   
   verifySession: (sessionId: string, token: string) =>
     api.post('/auth/verify-session', { sessionId, verificationToken: token }),
@@ -103,7 +113,10 @@ export const authApi = {
   me: () => api.get('/auth/me'),
   
   // Test endpoints for token theft simulation
-  saveTokenForTest: () => api.post('/auth/test/save-token'),
+  saveTokenForTest: () => {
+    const refreshToken = useAuthStore.getState().refreshToken;
+    return api.post('/auth/test/save-token', { refreshToken });
+  },
   
   simulateTokenTheft: () => api.post('/auth/test/simulate-theft'),
   

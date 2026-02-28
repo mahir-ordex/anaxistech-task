@@ -19,15 +19,17 @@ export interface Session {
 interface AuthState {
   user: User | null;
   accessToken: string | null;
+  refreshToken: string | null;
   currentSession: Session | null;
   requiresVerification: boolean;
   isAuthenticated: boolean;
   
   setUser: (user: User | null) => void;
   setAccessToken: (token: string | null) => void;
+  setRefreshToken: (token: string | null) => void;
   setCurrentSession: (session: Session | null) => void;
   setRequiresVerification: (requires: boolean) => void;
-  login: (user: User, accessToken: string, session: Session, requiresVerification?: boolean) => void;
+  login: (user: User, accessToken: string, session: Session, requiresVerification?: boolean, refreshToken?: string) => void;
   logout: (broadcast?: boolean) => void;
 }
 
@@ -39,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       accessToken: null,
+      refreshToken: null,
       currentSession: null,
       requiresVerification: false,
       isAuthenticated: false,
@@ -47,14 +50,17 @@ export const useAuthStore = create<AuthState>()(
       
       setAccessToken: (accessToken) => set({ accessToken }),
       
+      setRefreshToken: (refreshToken) => set({ refreshToken }),
+      
       setCurrentSession: (currentSession) => set({ currentSession }),
       
       setRequiresVerification: (requiresVerification) => set({ requiresVerification }),
       
-      login: (user, accessToken, session, requiresVerification = false) =>
+      login: (user, accessToken, session, requiresVerification = false, refreshToken) =>
         set({
           user,
           accessToken,
+          refreshToken: refreshToken || null,
           currentSession: session,
           requiresVerification,
           isAuthenticated: true,
@@ -64,6 +70,7 @@ export const useAuthStore = create<AuthState>()(
         set({
           user: null,
           accessToken: null,
+          refreshToken: null,
           currentSession: null,
           requiresVerification: false,
           isAuthenticated: false,
@@ -79,6 +86,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
         currentSession: state.currentSession,
         isAuthenticated: state.isAuthenticated,
       }),

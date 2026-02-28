@@ -54,8 +54,8 @@ export function RegisterPage() {
         email: form.email,
         password: form.password,
       });
-      const { user, accessToken, session } = response.data.data;
-      login(user, accessToken, session);
+      const { user, accessToken, refreshToken, session } = response.data.data;
+      login(user, accessToken, session, false, refreshToken);
       navigate('/dashboard');
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;

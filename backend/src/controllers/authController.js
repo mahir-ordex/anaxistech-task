@@ -55,6 +55,7 @@ class AuthController {
           role: user.role
         },
         accessToken,
+        refreshToken, // Also return in body for cross-origin support
         session: {
           id: session._id,
           deviceName: session.deviceName,
@@ -110,6 +111,7 @@ class AuthController {
           role: user.role
         },
         accessToken,
+        refreshToken, // Also return in body for cross-origin support
         session: {
           id: session._id,
           deviceName: session.deviceName,
@@ -152,6 +154,7 @@ class AuthController {
       
       return ApiResponse.success(res, {
         accessToken: result.accessToken,
+        refreshToken: result.refreshToken, // Also return in body for cross-origin support
         session: {
           id: result.session._id,
           deviceName: result.session.deviceName
@@ -256,10 +259,10 @@ class AuthController {
 
   static async saveTokenForTest(req, res) {
     try {
-      const refreshToken = req.cookies?.refreshToken;
+      const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
       
       if (!refreshToken) {
-        return ApiResponse.error(res, 'No refresh token found', 400);
+        return ApiResponse.error(res, 'No refresh token found. Please login again.', 400);
       }
       
       // Store the token for this user (for testing purposes)
