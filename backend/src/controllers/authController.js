@@ -2,6 +2,22 @@ const { User } = require('../models');
 const { AuthService } = require('../services');
 const { ApiResponse } = require('../utils');
 
+// Cookie options helper for cross-site compatibility
+const getCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/',
+  maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+});
+
+const getClearCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/'
+});
+
 class AuthController {
   // Register new user
   static async register(req, res) {
@@ -29,13 +45,7 @@ class AuthController {
         await AuthService.createSession(user, req);
       
       // Set refresh token in HTTP-only cookie
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-      });
+      res.cookie('refreshToken', refreshToken, getCookieOptions());
       
       return ApiResponse.success(res, {
         user: {
@@ -89,13 +99,7 @@ class AuthController {
         await AuthService.createSession(user, req, sessionOptions);
       
       // Set refresh token in HTTP-only cookie
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-      });
+      res.cookie('refreshToken', refreshToken, getCookieOptions());
       
       // If session is suspicious, include verification info
       const response = {
@@ -144,13 +148,7 @@ class AuthController {
       const result = await AuthService.rotateRefreshToken(refreshToken, req);
       
       // Set new refresh token in cookie
-      res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      });
+      res.cookie('refreshToken', result.refreshToken, getCookieOptions());
       
       return ApiResponse.success(res, {
         accessToken: result.accessToken,
@@ -162,7 +160,7 @@ class AuthController {
       
     } catch (error) {
       // Clear the cookie on error
-      res.clearCookie('refreshToken', { path: '/' });
+      res.clearCookie('refreshToken', getClearCookieOptions());
       
       if (error.message === 'TOKEN_THEFT_DETECTED') {
         return ApiResponse.error(res, 
@@ -191,14 +189,14 @@ class AuthController {
       await AuthService.logout(refreshToken);
       
       // Clear cookie
-      res.clearCookie('refreshToken', { path: '/' });
+      res.clearCookie('refreshToken', getClearCookieOptions());
       
       return ApiResponse.success(res, null, 'Logged out successfully');
       
     } catch (error) {
       console.error('Logout error:', error);
       // Still clear cookie even on error
-      res.clearCookie('refreshToken', { path: '/' });
+      res.clearCookie('refreshToken', getClearCookieOptions());
       return ApiResponse.success(res, null, 'Logged out');
     }
   }
