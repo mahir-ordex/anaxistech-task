@@ -67,10 +67,14 @@ export function VerifySessionPage() {
             
             {error && <Alert variant="destructive">{error}</Alert>}
 
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              Check your email for the verification token. In development mode, 
-              the token is logged to the server console.
-            </p>
+            {currentSession?.verificationToken && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                <p className="text-sm text-blue-600 mb-2">Your verification token:</p>
+                <p className="text-2xl font-mono font-bold text-blue-800 tracking-wider">
+                  {currentSession.verificationToken}
+                </p>
+              </div>
+            )}
 
             <Input
               type="text"

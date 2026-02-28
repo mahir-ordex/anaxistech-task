@@ -117,17 +117,16 @@ class AuthController {
           deviceName: session.deviceName,
           browser: session.browser,
           isSuspicious: session.isSuspicious,
-          suspiciousReason: session.suspiciousReason
+          suspiciousReason: session.suspiciousReason,
+          verificationToken: session.verificationToken // Include for dev/testing
         },
         requiresVerification
       };
       
       // Handle suspicious login verification
       if (requiresVerification) {
-        // TODO: Send verification email with token: session.verificationToken
-        // In production, integrate email service here (SendGrid, SES, etc.)
         console.log(`[DEV] Verification token for ${user.email}: ${session.verificationToken}`);
-        response.message = 'Login from new location detected. Please check your email to verify this session.';
+        response.message = 'Login from new location detected. Verify using the token shown below.';
       }
       
       return ApiResponse.success(res, response, 'Login successful');

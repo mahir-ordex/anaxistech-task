@@ -102,6 +102,8 @@ export function LoginPage() {
           </div>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>Enter your credentials to access your account</CardDescription>
+          <CardDescription><span>admin : admin@gmail.com</span><span>test : test@gmail.com</span></CardDescription>
+          <CardDescription>password : Test1234</CardDescription>
           
           {/* Location status indicator */}
           <div className="flex items-center justify-center gap-2 text-xs mt-2">

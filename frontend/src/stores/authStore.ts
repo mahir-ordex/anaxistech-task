@@ -14,6 +14,7 @@ export interface Session {
   browser: string;
   isSuspicious: boolean;
   suspiciousReason?: string;
+  verificationToken?: string;
 }
 
 interface AuthState {
