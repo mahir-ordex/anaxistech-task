@@ -70,7 +70,7 @@ export function VerifySessionPage() {
             {currentSession?.verificationToken && (
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
                 <p className="text-sm text-blue-600 mb-2">Your verification token:</p>
-                <p className="text-2xl font-mono font-bold text-blue-800 tracking-wider">
+                <p className="text-xs font-mono font-bold text-blue-800 break-all select-all">
                   {currentSession.verificationToken}
                 </p>
               </div>

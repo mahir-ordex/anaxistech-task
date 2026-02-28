@@ -102,8 +102,11 @@ export function LoginPage() {
           </div>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>Enter your credentials to access your account</CardDescription>
-          <CardDescription><span>admin : admin@gmail.com</span><span>test : test@gmail.com</span></CardDescription>
-          <CardDescription>password : Test1234</CardDescription>
+          <div className="text-sm text-[hsl(var(--muted-foreground))] space-y-1 mt-2 p-2 bg-[hsl(var(--muted))] rounded">
+            <p><strong>Admin:</strong> admin@gmail.com</p>
+            <p><strong>Test:</strong> test@gmail.com</p>
+            <p><strong>Password:</strong> Test1234</p>
+          </div>
           
           {/* Location status indicator */}
           <div className="flex items-center justify-center gap-2 text-xs mt-2">
