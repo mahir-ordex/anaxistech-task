@@ -108,6 +108,14 @@ export function AdminPage() {
   useEffect(() => {
     fetchSessions();
     fetchUsers();
+    
+    // Periodic refresh - check every 30 seconds
+    const intervalId = setInterval(() => {
+      fetchSessions();
+      fetchUsers();
+    }, 30000);
+    
+    return () => clearInterval(intervalId);
   }, [fetchSessions, fetchUsers]);
 
   // Redirect if not admin
@@ -120,7 +128,9 @@ export function AdminPage() {
     setForceLogoutUserId(userId);
     try {
       await adminApi.forceLogoutUser(userId);
-      await Promise.all([fetchSessions(), fetchUsers()]);
+      // Refresh data in background - don't block UI
+      fetchSessions();
+      fetchUsers();
     } finally {
       setForceLogoutUserId(null);
     }
@@ -130,7 +140,9 @@ export function AdminPage() {
     setForceLogoutSessionId(sessionId);
     try {
       await adminApi.forceLogoutSession(sessionId);
-      await Promise.all([fetchSessions(), fetchUsers()]);
+      // Refresh data in background - don't block UI
+      fetchSessions();
+      fetchUsers();
     } finally {
       setForceLogoutSessionId(null);
     }

@@ -84,6 +84,13 @@ export function DashboardPage() {
 
   useEffect(() => {
     fetchSessions();
+    
+    // Periodic session validation - check every 30 seconds if session is still valid
+    const intervalId = setInterval(() => {
+      fetchSessions();
+    }, 30000);
+    
+    return () => clearInterval(intervalId);
   }, [fetchSessions]);
 
   // Redirect to login if no sessions after loading completes
